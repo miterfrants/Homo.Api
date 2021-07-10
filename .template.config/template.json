@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Peter Huang",
+    "classifications": ["Common", "Api"],
+    "identity": "Homo.Api",
+    "name": "Basic Api Server",
+    "shortName": "homo-api"
+}
