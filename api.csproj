@@ -3,7 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <PackageType>Template</PackageType>
     <PackageId>Homo.Api</PackageId>
-    <PackageVersion>5.0.3</PackageVersion>
+    <PackageVersion>5.0.4</PackageVersion>
     <PackageTags>dotnet-new;templates;api</PackageTags>
     <Title>Homo Basic Api</Title>
     <Authors>Peter Huang</Authors>
@@ -15,9 +15,10 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="**\*" Exclude="**\bin\**;**\obj\**" />
+    <Content Include="**\*" Exclude="**\bin\**;**\obj\**"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Homo.JwtAuth" Version="5.0.10" />
+    <PackageReference Include="Homo.Core" Version="5.0.9"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
   </ItemGroup>
 </Project>

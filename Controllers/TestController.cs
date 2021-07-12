@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Homo.Core.Constants;
-using Homo.Api.Models;
-using Homo.Api.Filters;
 
-namespace Homo.Api.Controllers
+namespace Homo.Api
 {
     [Route("v1/test")]
     public class TestController : ControllerBase
     {
-        private readonly string _jwtKey;
         public TestController(Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
         }
@@ -17,7 +13,7 @@ namespace Homo.Api.Controllers
         [HttpGet]
         public dynamic getTest()
         {
-            return new { website = "test" };
+            return new { project = "Homo.Api" };
         }
 
         [HttpPost]

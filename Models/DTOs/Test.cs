@@ -1,12 +1,12 @@
-using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations;
 
-namespace Homo.Api.Models
+namespace Homo.Api
 {
     public abstract partial class DTOs
     {
         public class Test
         {
-            [Required(ErrorMessage = "請填寫名稱")]
+            [Required]
             public string Name { get; set; }
         }
     }

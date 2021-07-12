@@ -1,7 +1,8 @@
-﻿namespace Homo.Api.Constants
+﻿namespace Homo.Api
 {
-    public partial class ERROR_CODE : Homo.Auth.Constants.ERROR_CODE
+    public partial class ERROR_CODE
     {
+        public static string TEST = "TEST";
         public static string INVALID_FORM = "INVALID_FORM";
     }
 }

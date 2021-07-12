@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Homo.Core.Constants;
 
-namespace Homo.Api.Filters
+namespace Homo.Api
 {
     public class ValidateAttribute : ActionFilterAttribute
     {
@@ -22,7 +22,7 @@ namespace Homo.Api.Filters
                     List<string> errorMessages = errors.Select(x => x.ErrorMessage).ToList<string>();
                     results.Add($"{key.Substring(0, 1).ToLower()}{key.Substring(1)}", errorMessages);
                 }
-                throw new CustomException(Constants.ERROR_CODE.INVALID_FORM, System.Net.HttpStatusCode.BadRequest, null, results);
+                throw new CustomException(ERROR_CODE.INVALID_FORM, System.Net.HttpStatusCode.BadRequest, null, results);
             }
         }
     }

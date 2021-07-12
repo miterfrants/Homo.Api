@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Homo.Auth.Constants;
-using Homo.Auth.Middlewares;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace Homo.Api
 {
@@ -47,7 +48,6 @@ namespace Homo.Api
                     options.AddPolicy(AllowSpecificOrigins,
                         builder =>
                         {
-
                             builder.WithOrigins(crossOrigins)
                                 .AllowAnyHeader()
                                 .AllowAnyMethod()
@@ -56,7 +56,10 @@ namespace Homo.Api
                         });
                 });
             }
-
+            CultureInfo currentCultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+            services.AddSingleton<ErrorMessageLocalizer>(new ErrorMessageLocalizer(appSettings.Common.LocalizationResourcesPath));
+            services.AddSingleton<CommonLocalizer>(new CommonLocalizer(appSettings.Common.LocalizationResourcesPath));
+            services.AddSingleton<ValidationLocalizer>(new ValidationLocalizer(appSettings.Common.LocalizationResourcesPath));
             services.AddControllers();
         }
 
@@ -68,12 +71,29 @@ namespace Homo.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            var supportedCultures = new[] {
+                new CultureInfo("zh-TW"),
+                new CultureInfo("en-US"),
+                new CultureInfo("fr"),
+            };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures,
+                RequestCultureProviders = new List<IRequestCultureProvider>
+                {
+                    new QueryStringRequestCultureProvider{QueryStringKey= "culture"}
+                }
+            });
+
             String apiPrefix = Configuration.GetSection("Config").GetSection("Common").GetValue<string>("ApiPrefix");
             app.UseCors(AllowSpecificOrigins);
             app.UseHttpsRedirection();
             app.UsePathBase(new PathString($"/{apiPrefix}"));
             app.UseRouting();
-            app.UseMiddleware(typeof(JwtAuthErrorHandlingMiddleware));
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
