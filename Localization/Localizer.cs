@@ -9,97 +9,96 @@ namespace Homo.Api
     public interface ILocalizer
     {
         Dictionary<string, Dictionary<string, string>> Mapping { get; set; }
-        string Get(string key, CultureInfo cultureInfo);
+        string Get(string key, CultureInfo cultureInfo, Dictionary<string, string> templateVariables, string resourceFolder);
     }
 
-    public class ErrorMessageLocalizer : ILocalizer
+    public class Localizer : ILocalizer
     {
         public Dictionary<string, Dictionary<string, string>> Mapping { get; set; }
-        private string _sourcePath;
-        public ErrorMessageLocalizer(string sourcePath)
+        protected string _sourcePath;
+        public Localizer(string sourcePath)
         {
             _sourcePath = sourcePath;
             Mapping = new Dictionary<string, Dictionary<string, string>>();
         }
 
-        public string Get(string key, CultureInfo cultureInfo = null)
+        public string Get(string key, CultureInfo cultureInfo = null, Dictionary<string, string> templateVariables = null, string resourceFolder = "")
         {
             if (cultureInfo == null)
             {
                 cultureInfo = Thread.CurrentThread.CurrentCulture;
             }
+
             string cultureName = cultureInfo.Name;
+            string result = null;
             if (Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key))
             {
-                return Mapping[cultureName][key];
+                result = Mapping[cultureName][key];
             }
 
-            if (!System.IO.File.Exists($"{_sourcePath}/Error/{cultureName}.json"))
+            if (System.IO.File.Exists($"{_sourcePath}/Common/{cultureName}.json"))
             {
-                return key;
+                Mapping[cultureName] = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{_sourcePath}/{resourceFolder}/{cultureName}.json"));
             }
-            Mapping[cultureName] = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{_sourcePath}/Error/{cultureName}.json"));
-            return Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key) ? Mapping[cultureName][key] : key;
+
+            if (Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key))
+            {
+                result = Mapping[cultureName][key];
+            }
+
+            if (result == null)
+            {
+                result = key;
+            }
+
+            if (templateVariables == null)
+            {
+                return result;
+            }
+
+            foreach (string keyInTemplateVariables in templateVariables.Keys)
+            {
+                result = result.Replace($"{{{keyInTemplateVariables}}}", templateVariables[keyInTemplateVariables]);
+            }
+
+            return result;
+        }
+
+    }
+
+    public class ErrorMessageLocalizer : Localizer
+    {
+        public ErrorMessageLocalizer(string sourcePath) : base(sourcePath)
+        {
+        }
+
+        public string Get(string key, CultureInfo cultureInfo = null, Dictionary<string, string> templateVariables = null)
+        {
+            return base.Get(key, cultureInfo, templateVariables, "Error");
         }
     }
 
-    public class CommonLocalizer : ILocalizer
+    public class CommonLocalizer : Localizer
     {
-        public Dictionary<string, Dictionary<string, string>> Mapping { get; set; }
-        private string _sourcePath;
-        public CommonLocalizer(string sourcePath)
+        public CommonLocalizer(string sourcePath) : base(sourcePath)
         {
-            _sourcePath = sourcePath;
-            Mapping = new Dictionary<string, Dictionary<string, string>>();
         }
 
-        public string Get(string key, CultureInfo cultureInfo = null)
+        public string Get(string key, CultureInfo cultureInfo = null, Dictionary<string, string> templateVariables = null)
         {
-            if (cultureInfo == null)
-            {
-                cultureInfo = Thread.CurrentThread.CurrentCulture;
-            }
-            string cultureName = cultureInfo.Name;
-            if (Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key))
-            {
-                return Mapping[cultureName][key];
-            }
-            if (!System.IO.File.Exists($"{_sourcePath}/Common/{cultureName}.json"))
-            {
-                return key;
-            }
-            Mapping[cultureName] = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{_sourcePath}/Common/{cultureName}.json"));
-            return Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key) ? Mapping[cultureName][key] : key;
+            return base.Get(key, cultureInfo, templateVariables, "Common");
         }
     }
 
-    public class ValidationLocalizer : ILocalizer
+    public class ValidationLocalizer : Localizer
     {
-        public Dictionary<string, Dictionary<string, string>> Mapping { get; set; }
-        private string _sourcePath;
-        public ValidationLocalizer(string sourcePath)
+        public ValidationLocalizer(string sourcePath) : base(sourcePath)
         {
-            _sourcePath = sourcePath;
-            Mapping = new Dictionary<string, Dictionary<string, string>>();
         }
 
-        public string Get(string key, CultureInfo cultureInfo = null)
+        public string Get(string key, CultureInfo cultureInfo = null, Dictionary<string, string> templateVariables = null)
         {
-            if (cultureInfo == null)
-            {
-                cultureInfo = Thread.CurrentThread.CurrentCulture;
-            }
-            string cultureName = cultureInfo.Name;
-            if (Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key))
-            {
-                return Mapping[cultureName][key];
-            }
-            if (!System.IO.File.Exists($"{_sourcePath}/Validation/{cultureName}.json"))
-            {
-                return key;
-            }
-            Mapping[cultureName] = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($"{_sourcePath}/Validation/{cultureName}.json"));
-            return Mapping.ContainsKey(cultureName) && Mapping[cultureName].ContainsKey(key) ? Mapping[cultureName][key] : key;
+            return base.Get(key, cultureInfo, templateVariables, "Validation");
         }
     }
 }

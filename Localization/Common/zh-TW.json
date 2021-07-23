@@ -1,7 +1,3 @@
 {
-    "TEST": "測試",
-    "INVALID_EMAIL": "錯誤 EMAIL 格式",
-    "UNAUTH_ACCESS_API": "未授權使用 API",
-    "INVALID_FORM": "表單驗證發生錯誤",
     "hello": "您好!"
 }

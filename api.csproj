@@ -3,7 +3,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <PackageType>Template</PackageType>
     <PackageId>Homo.Api</PackageId>
-    <PackageVersion>5.0.5.preview.1</PackageVersion>
+    <VersionPrefix>5.0.5</VersionPrefix>
+    <VersionSuffix>alpha.2</VersionSuffix>
     <PackageTags>dotnet-new;templates;api</PackageTags>
     <Title>Homo Basic Api</Title>
     <Authors>Peter Huang</Authors>

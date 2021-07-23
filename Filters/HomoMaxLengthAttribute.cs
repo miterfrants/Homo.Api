@@ -2,23 +2,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Homo.Api
 {
-    public class Required : RequiredAttribute
+    public class MaxLength : MaxLengthAttribute
     {
-        public Required() : base()
+        public MaxLength(int length) : base(length)
         {
         }
+
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value != null && value.GetType().IsEnum)
-            {
-                return ValidationResult.Success;
-            }
+            ValidationResult result = base.IsValid(value, validationContext);
 
-            string stringify = (string)value;
-            if (System.String.IsNullOrEmpty(stringify))
+            if (result != null)
             {
                 ValidationLocalizer validationLocalizer = validationContext.GetService(typeof(ValidationLocalizer)) as ValidationLocalizer;
-                return new ValidationResult(validationLocalizer.Get($"{validationContext.MemberName} is required"));
+                return new ValidationResult(validationLocalizer.Get($"{validationContext.MemberName} length bigger than {this.Length}"));
             }
             return ValidationResult.Success;
         }

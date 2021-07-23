@@ -39,7 +39,8 @@ namespace Homo.Api
 
         protected virtual ActionResult<dynamic> HandleExceptionAsync(HttpContext context, Exception ex, IOptions<IAppSettings> config, ErrorMessageLocalizer localizer)
         {
-            string localizationResourcesPath = config.Value.Common.LocalizationResourcesPath;
+            var appSettings = JsonConvert.DeserializeObject<AppSettings>(JsonConvert.SerializeObject(config.Value));
+            string localizationResourcesPath = appSettings.Common.LocalizationResourcesPath;
             var code = HttpStatusCode.InternalServerError;
             string errorKey = "";
             string internalErrorMessage = "";

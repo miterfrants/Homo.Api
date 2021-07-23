@@ -1,4 +1,4 @@
-﻿namespace Homo.Api
+namespace Homo.Api
 {
     public partial class ERROR_CODE
     {
