@@ -7,9 +7,15 @@ namespace Homo.Api
         public Required() : base()
         {
         }
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(dynamic value, ValidationContext validationContext)
         {
+            System.Console.WriteLine($"testing:{Newtonsoft.Json.JsonConvert.SerializeObject(value.GetType().Name, Newtonsoft.Json.Formatting.Indented)}");
             if (value != null && value.GetType().IsEnum)
+            {
+                return ValidationResult.Success;
+            }
+
+            if (value.GetType().Name == "Byte" && value.ToString().Length > 0)
             {
                 return ValidationResult.Success;
             }
